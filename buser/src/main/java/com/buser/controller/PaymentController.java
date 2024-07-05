@@ -1,52 +1,73 @@
 package com.buser.controller;
 
+import com.buser.dto.CreatePaymentRequest;
 import com.buser.model.Payment;
-import com.buser.service.implementation.PaymentServiceImplementatio;
-
+import com.buser.model.PaymentType;
+import com.buser.model.Reservation;
+import com.buser.service.PaymentService;
+import com.buser.service.ReservationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/payments")
 public class PaymentController {
 
+    private static final Logger log = LoggerFactory.getLogger(PaymentController.class);
+
     @Autowired
-    private PaymentServiceImplementatio paymentService;
+    private PaymentService paymentService;
 
-    @GetMapping
-    public ResponseEntity<List<Payment>> getAllPayments() {
-        return ResponseEntity.ok(paymentService.getAllPayments());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Payment> getPaymentById(@PathVariable Long id) {
-        Payment payment = paymentService.getPaymentById(id);
-        return payment != null ? ResponseEntity.ok(payment) : ResponseEntity.notFound().build();
-    }
+    @Autowired
+    private ReservationService reservationService;
 
     @PostMapping
-    public ResponseEntity<Payment> simulatePayment(@RequestBody SimulatePaymentRequest request) {
-        return ResponseEntity.ok(paymentService.simulatePayment(request.getReservationId(), request.getAmount()));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePayment(@PathVariable Long id) {
-        paymentService.deletePayment(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Payment> createPayment(@RequestBody CreatePaymentRequest request) {
+        log.info("Creating payment for reservation ID: {}", request.getReservationId());
+        try {
+            Reservation reservation = reservationService.getReservationById(request.getReservationId());
+            if (reservation == null) {
+                log.warn("Reservation not found with ID: {}", request.getReservationId());
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Reservation not found");
+            }
+            Payment payment = new Payment();
+            payment.setReservation(reservation);
+            payment.setAmount(request.getAmount());
+            payment.setPaymentType(PaymentType.valueOf(request.getPaymentType()));  // Converte String para PaymentType
+            payment.setPaymentData(request.getPaymentData());
+            payment.setTransactionId(UUID.randomUUID());
+            Payment createdPayment = paymentService.createPayment(payment);
+            return ResponseEntity.ok(createdPayment);
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid payment type: {}", request.getPaymentType(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid payment type");
+        } catch (RuntimeException e) {
+            log.error("Error creating payment", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error creating payment");
+        }
     }
 
     @GetMapping("/transaction/{transactionId}")
-    public ResponseEntity<List<Payment>> findPaymentsByTransactionId(@PathVariable String transactionId) {
-        return ResponseEntity.ok(paymentService.findPaymentsByTransactionId(transactionId));
+    public ResponseEntity<Payment> getPaymentByTransactionId(@PathVariable UUID transactionId) {
+        log.info("Getting payment by transaction ID: {}", transactionId);
+        try {
+            Payment payment = paymentService.getPaymentByTransactionId(transactionId);
+            if (payment != null) {
+                return ResponseEntity.ok(payment);
+            } else {
+                log.warn("Payment not found with transaction ID: {}", transactionId);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment not found");
+            }
+        } catch (Exception e) {
+            log.error("Error occurred while getting payment by transaction ID: {}", transactionId, e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error occurred while getting payment");
+        }
     }
-}
-
-class SimulatePaymentRequest {
-    private Long reservationId;
-    private double amount;
-
-    // Getters and Setters
 }

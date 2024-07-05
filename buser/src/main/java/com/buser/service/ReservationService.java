@@ -11,6 +11,7 @@ public interface ReservationService {
     void cancelReservation(Long reservationId);
     void changeReservation(Long reservationId, List<Long> newSeatIds);
     Reservation getReservationByToken(UUID token);
+    Reservation getReservationById(Long id);
     List<Reservation> getReservationsByTripId(Long tripId);
 
 } 

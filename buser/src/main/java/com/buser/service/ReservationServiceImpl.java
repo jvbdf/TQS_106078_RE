@@ -2,10 +2,15 @@ package com.buser.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.buser.model.Reservation;
 import com.buser.model.Seat;
@@ -18,6 +23,8 @@ import com.buser.repository.TripRepository;
 @Service
 public class ReservationServiceImpl implements ReservationService {
 
+    private static final Logger logger = LoggerFactory.getLogger(ReservationServiceImpl.class);
+
     @Autowired
     private ReservationRepository reservationRepository;
 
@@ -29,15 +36,18 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public Reservation createReservation(String passengerName, String documentNumber, String email, String phone, Long tripId, List<Long> seatIds) {
+        logger.debug("Creating reservation for passenger: {}, document: {}, trip ID: {}", passengerName, documentNumber, tripId);
         Trip trip = tripRepository.findById(tripId).orElseThrow(() -> new RuntimeException("Trip not found"));
         List<Seat> seats = seatRepository.findAllById(seatIds);
 
-        if (seats.size() > trip.getAvailableSeats()) {
+        if (!trip.hasAvailableSeats(seats.size())) {
+            logger.error("Not enough available seats for trip ID: {}", tripId);
             throw new RuntimeException("Not enough available seats");
         }
 
         for (Seat seat : seats) {
             if (seat.isReserved()) {
+                logger.error("Seat {} is already reserved", seat.getSeatNumber());
                 throw new RuntimeException("Seat " + seat.getSeatNumber() + " is already reserved");
             }
         }
@@ -55,11 +65,13 @@ public class ReservationServiceImpl implements ReservationService {
 
         tripRepository.save(trip);
 
+        logger.info("Reservation created with token: {}", token);
         return reservationRepository.save(reservation);
     }
 
     @Override
     public void cancelReservation(Long reservationId) {
+        logger.debug("Cancelling reservation ID: {}", reservationId);
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new RuntimeException("Reservation not found"));
 
@@ -73,10 +85,12 @@ public class ReservationServiceImpl implements ReservationService {
         tripRepository.save(trip);
 
         reservationRepository.delete(reservation);
+        logger.info("Reservation ID: {} cancelled", reservationId);
     }
 
     @Override
     public void changeReservation(Long reservationId, List<Long> newSeatIds) {
+        logger.debug("Changing reservation ID: {}", reservationId);
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new RuntimeException("Reservation not found"));
 
@@ -91,12 +105,14 @@ public class ReservationServiceImpl implements ReservationService {
 
         List<Seat> newSeats = seatRepository.findAllById(newSeatIds);
 
-        if (newSeats.size() > trip.getAvailableSeats()) {
+        if (!trip.hasAvailableSeats(newSeats.size())) {
+            logger.error("Not enough available seats for trip ID: {}", trip.getId());
             throw new RuntimeException("Not enough available seats");
         }
 
         for (Seat newSeat : newSeats) {
             if (newSeat.isReserved()) {
+                logger.error("Seat {} is already reserved", newSeat.getSeatNumber());
                 throw new RuntimeException("Seat " + newSeat.getSeatNumber() + " is already reserved");
             }
         }
@@ -113,15 +129,30 @@ public class ReservationServiceImpl implements ReservationService {
         reservationRepository.save(reservation);
 
         tripRepository.save(trip);
+        logger.info("Reservation ID: {} changed", reservationId);
     }
 
     @Override
     public Reservation getReservationByToken(UUID token) {
+        logger.debug("Getting reservation by token: {}", token);
         return reservationRepository.findByToken(token);
     }
 
     @Override
     public List<Reservation> getReservationsByTripId(Long tripId) {
+        logger.debug("Getting reservations for trip ID: {}", tripId);
         return reservationRepository.findByTripId(tripId);
+    }
+
+    @Override
+    public Reservation getReservationById(Long id) {
+        logger.info("Fetching reservation with ID: {}", id);
+        Optional<Reservation> reservation = reservationRepository.findById(id);
+        if (reservation.isPresent()) {
+            return reservation.get();
+        } else {
+            logger.warn("Reservation not found with ID: {}", id);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Reservation not found");
+        }
     }
 }

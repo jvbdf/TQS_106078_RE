@@ -1,7 +1,9 @@
 package com.buser.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import com.buser.model.City;
 import com.buser.model.Trip;
 
 public interface TripService {
@@ -9,5 +11,8 @@ public interface TripService {
     Trip getTripById(Long id);
     Trip updateCurrentLocation(Long tripId, String currentLocation);
     List<Trip> getUpcomingTripsByOrigin(String originName);
+    List<Trip> getTrips(City origin, City destination, LocalDateTime startDateTime, LocalDateTime endDateTime,
+            String currency);
+    City getCityById(Long originId);
     
 }
