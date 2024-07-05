@@ -33,12 +33,11 @@ public class Trip {
     @Column(nullable = false)
     private LocalDateTime arrivalTime;
 
-    @Column(nullable = false)
-    private double price;
+    
 
     @Column(length = 100)
 
-    private String currentLocation;
+    private City currentLocation;
 
     @Column(length = 100)
 
@@ -69,21 +68,20 @@ public class Trip {
     public Trip() {
     }
 
-    public Trip(Long id, Route route, LocalDateTime departureTime, LocalDateTime arrivalTime, double price,
-            String currentLocation, String nextLocation, List<Seat> seats, List<Reservation> reservations) {
-        this.id = id;
+    public Trip(Route route, LocalDateTime departureTime, LocalDateTime arrivalTime, 
+            List<Seat> seats) {
         this.route = route;
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
-        this.price = price;
-        this.currentLocation = currentLocation;
-        this.nextLocation = nextLocation;
+        
+        this.currentLocation = route.getOrigin();
         this.seats = seats;
-        this.reservations = reservations;
     }
-    public boolean hasAvailableSeats(int seatCount) {
-        return this.availableSeats >= seatCount;
+    public boolean hasAvailableSeats(int numberOfSeats) {
+        long reservedSeatsCount = seats.stream().filter(Seat::isReserved).count();
+        return (seats.size() - reservedSeatsCount) >= numberOfSeats;
     }
+
 
     public void reserveSeats(int seatCount) {
         if (hasAvailableSeats(seatCount)) {
@@ -128,19 +126,12 @@ public class Trip {
         this.arrivalTime = arrivalTime;
     }
 
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public String getCurrentLocation() {
+   
+    public City getCurrentLocation() {
         return currentLocation;
     }
 
-    public void setCurrentLocation(String currentLocation) {
+    public void setCurrentLocation(City currentLocation) {
         this.currentLocation = currentLocation;
     }
 

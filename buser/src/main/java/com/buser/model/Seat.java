@@ -44,15 +44,14 @@ public class Seat {
     @ManyToMany(mappedBy = "seats")
     private List<Reservation> reservations;
 
-    public Seat(Long id, String seatNumber, SeatType type, boolean reserved, double price, Route route,
-            List<Reservation> reservations) {
-        this.id = id;
+    public Seat(String seatNumber, SeatType type, double price, Route route
+        ) {
+        
         this.seatNumber = seatNumber;
         this.type = type;
-        this.reserved = reserved;
+        this.reserved = false;
         this.price = price;
         this.route = route;
-        this.reservations = reservations;
 
 
         

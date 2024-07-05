@@ -32,11 +32,11 @@ public class Route {
     @OneToMany(mappedBy = "route", cascade = CascadeType.ALL)
     private List<Trip> trips;
 
-    public Route(Long id, City origin, City destination, List<Trip> trips) {
-        this.id = id;
+    public Route( City origin, City destination) {
+
         this.origin = origin;
         this.destination = destination;
-        this.trips = trips;
+        
     }
 
     public Long getId() {

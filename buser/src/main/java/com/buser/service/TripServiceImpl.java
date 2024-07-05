@@ -47,12 +47,12 @@ public class TripServiceImpl implements TripService {
     }
 
     @Override
-    public Trip updateCurrentLocation(Long tripId, String currentLocation) {
-        logger.debug("Updating current location of trip ID: {} to {}", tripId, currentLocation);
+    public Trip updateCurrentLocation(Long tripId, City newLocation) {
+        logger.debug("Updating current location of trip ID: {} to {}", tripId, newLocation);
         Trip trip = tripRepository.findById(tripId).orElseThrow(() -> new RuntimeException("Trip not found"));
-        trip.setCurrentLocation(currentLocation);
+        trip.setCurrentLocation(newLocation);
         Trip updatedTrip = tripRepository.save(trip);
-        logger.info("Updated current location of trip ID: {} to {}", tripId, currentLocation);
+        logger.info("Updated current location of trip ID: {} to {}", tripId, newLocation);
         return updatedTrip;
     }
 
@@ -77,5 +77,7 @@ public class TripServiceImpl implements TripService {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getTrips'");
     }
+
+    
 
 }

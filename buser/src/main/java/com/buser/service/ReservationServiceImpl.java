@@ -60,7 +60,7 @@ public class ReservationServiceImpl implements ReservationService {
         }
 
         UUID token = UUID.randomUUID();
-        Reservation reservation = new Reservation(passengerName, documentNumber, email, phone, LocalDateTime.now(), token, seats, trip);
+        Reservation reservation = new Reservation(passengerName, documentNumber, email, phone, LocalDateTime.now(), seats, trip);
         reservation.setTotalPrice(seats.stream().mapToDouble(Seat::getPrice).sum());
 
         tripRepository.save(trip);
@@ -68,6 +68,7 @@ public class ReservationServiceImpl implements ReservationService {
         logger.info("Reservation created with token: {}", token);
         return reservationRepository.save(reservation);
     }
+    
 
     @Override
     public void cancelReservation(Long reservationId) {

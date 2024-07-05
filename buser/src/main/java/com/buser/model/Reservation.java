@@ -16,7 +16,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name= "reservation")
+@Table(name = "reservation")
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,15 +40,14 @@ public class Reservation {
     @Column(nullable = false, unique = true)
     private UUID token;
 
+    @Column(nullable = false, unique = true)
+    private ReservationStatus status;
+
     @Column(nullable = false)
     private double totalPrice;
 
     @ManyToMany
-    @JoinTable(
-        name = "reservation_seat",
-        joinColumns = @JoinColumn(name = "reservation_id"),
-        inverseJoinColumns = @JoinColumn(name = "seat_id")
-    )
+    @JoinTable(name = "reservation_seat", joinColumns = @JoinColumn(name = "reservation_id"), inverseJoinColumns = @JoinColumn(name = "seat_id"))
     private List<Seat> seats;
 
     @ManyToOne
@@ -59,17 +58,21 @@ public class Reservation {
     }
 
     public Reservation(String passengerName, String documentNumber, String email, String phone,
-            LocalDateTime reservationTime, UUID token, List<Seat> seats, Trip trip) {
-        this.id = id;
+            LocalDateTime reservationTime, List<Seat> seats, Trip trip) {
         this.passengerName = passengerName;
         this.documentNumber = documentNumber;
         this.email = email;
         this.phone = phone;
         this.reservationTime = reservationTime;
-        this.token = token;
-        this.totalPrice = totalPrice;
+        this.token = UUID.randomUUID();
+        this.status = ReservationStatus.PENDING;
         this.seats = seats;
         this.trip = trip;
+    }
+
+    public Reservation(String passengerName2, String documentNumber2, String email2, String phone2, LocalDateTime now,
+            UUID token2, List<Seat> seats2, Trip trip2) {
+        //TODO Auto-generated constructor stub
     }
 
     public Long getId() {
@@ -151,7 +154,5 @@ public class Reservation {
     public void setTrip(Trip trip) {
         this.trip = trip;
     }
-
-    
 
 }

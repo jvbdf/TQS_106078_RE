@@ -31,8 +31,6 @@ public class Payment {
     @Min(0)
     private double amount;
 
-    @Column(nullable = false)
-    private LocalDateTime paymentTime;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -51,21 +49,17 @@ public class Payment {
     @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;
 
-    public Payment(Long id, UUID transactionId, @Min(0) double amount, LocalDateTime paymentTime,
-            PaymentStatus paymentStatus, PaymentType paymentType, @Size(min = 1, max = 255) String paymentData,
+    public Payment(  @Min(0) double amount, PaymentType paymentType, @Size(min = 1, max = 255) String paymentData,
             Reservation reservation) {
-        this.id = id;
-        this.transactionId = transactionId;
+        this.transactionId = UUID.randomUUID();
         this.amount = amount;
-        this.paymentTime = paymentTime;
-        this.paymentStatus = paymentStatus;
+        this.paymentStatus = PaymentStatus.PENDING;
         this.paymentType = paymentType;
         this.paymentData = paymentData;
         this.reservation = reservation;
     }
 
     public Payment() {
-        //TODO Auto-generated constructor stub
     }
 
     public Long getId() {
@@ -92,13 +86,7 @@ public class Payment {
         this.amount = amount;
     }
 
-    public LocalDateTime getPaymentTime() {
-        return paymentTime;
-    }
-
-    public void setPaymentTime(LocalDateTime paymentTime) {
-        this.paymentTime = paymentTime;
-    }
+   
 
     public PaymentStatus getPaymentStatus() {
         return paymentStatus;
