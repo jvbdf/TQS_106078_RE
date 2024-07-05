@@ -1,7 +1,7 @@
 package com.buser.repository;
 
 import com.buser.model.Seat;
-import com.buser.model.Trip;
+import com.buser.model.SeatType;
 
 import java.util.List;
 
@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SeatRepository extends JpaRepository<Seat, Long> {
-    public List<Seat> findByTripAndReserved(Trip trip, boolean reserved);
+    List<Seat> findByTripIdAndType(Long tripId, SeatType type);
 }
