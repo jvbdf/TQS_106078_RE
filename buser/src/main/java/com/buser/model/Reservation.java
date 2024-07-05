@@ -2,6 +2,7 @@ package com.buser.model;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,14 +24,22 @@ public class Reservation {
 
     @Column(nullable = false, length = 100)
     private String passengerName;
+
     @Column(nullable = false, length = 15)
     private String documentNumber;
+
+    @Column(nullable = false)
+    private String email;
+
+    @Column(nullable = false, length = 15)
+    private String phone;
+
     @Column(nullable = false)
     private LocalDateTime reservationTime;
-    
-    @Column(nullable = false)
-    private String token;
-    
+
+    @Column(nullable = false, unique = true)
+    private UUID token;
+
     @Column(nullable = false)
     private double totalPrice;
 
@@ -43,22 +52,25 @@ public class Reservation {
     private List<Seat> seats;
 
     @ManyToOne
-    @JoinColumn(name = "trip_id")
+    @JoinColumn(name = "trip_id", nullable = false)
     private Trip trip;
 
     public Reservation() {
     }
 
-    public Reservation(String passengerName,String documentNumber, LocalDateTime reservationTime, String token, List<Seat> seats, Trip trip) {
+    public Reservation(Long id, String passengerName, String documentNumber, String email, String phone,
+            LocalDateTime reservationTime, UUID token, double totalPrice, List<Seat> seats, Trip trip) {
+        this.id = id;
         this.passengerName = passengerName;
         this.documentNumber = documentNumber;
+        this.email = email;
+        this.phone = phone;
         this.reservationTime = reservationTime;
         this.token = token;
+        this.totalPrice = totalPrice;
         this.seats = seats;
         this.trip = trip;
-        this.totalPrice = seats.stream().mapToDouble(Seat::getPrice).sum();
     }
-   
 
     public Long getId() {
         return id;
@@ -76,6 +88,30 @@ public class Reservation {
         this.passengerName = passengerName;
     }
 
+    public String getDocumentNumber() {
+        return documentNumber;
+    }
+
+    public void setDocumentNumber(String documentNumber) {
+        this.documentNumber = documentNumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     public LocalDateTime getReservationTime() {
         return reservationTime;
     }
@@ -84,11 +120,11 @@ public class Reservation {
         this.reservationTime = reservationTime;
     }
 
-    public String getToken() {
+    public UUID getToken() {
         return token;
     }
 
-    public void setToken(String token) {
+    public void setToken(UUID token) {
         this.token = token;
     }
 
@@ -115,5 +151,7 @@ public class Reservation {
     public void setTrip(Trip trip) {
         this.trip = trip;
     }
+
+    
 
 }

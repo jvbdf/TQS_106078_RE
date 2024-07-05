@@ -14,6 +14,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+
 @Entity
 @Table(name = "seat")
 public class Seat {
@@ -32,29 +33,29 @@ public class Seat {
 
     @Column(nullable = false)
     private boolean reserved;
-    
+
     @Column(nullable = false)
     private double price;
 
     @ManyToOne
-    @JoinColumn(name = "trip_id")
-    @Column(nullable = false)
-    private Trip trip;
+    @JoinColumn(name = "route_id", nullable = false)
+    private Route route;
 
     @ManyToMany(mappedBy = "seats")
-    @Column(nullable = false)
     private List<Reservation> reservations;
 
-
-    public Seat() {
-    }
-
-    public Seat(String seatNumber, SeatType type, boolean reserved, double price, Trip trip) {
+    public Seat(Long id, String seatNumber, SeatType type, boolean reserved, double price, Route route,
+            List<Reservation> reservations) {
+        this.id = id;
         this.seatNumber = seatNumber;
         this.type = type;
         this.reserved = reserved;
         this.price = price;
-        this.trip = trip;
+        this.route = route;
+        this.reservations = reservations;
+
+
+        
     }
 
     public Long getId() {
@@ -97,12 +98,12 @@ public class Seat {
         this.price = price;
     }
 
-    public Trip getTrip() {
-        return trip;
+    public Route getRoute() {
+        return route;
     }
 
-    public void setTrip(Trip trip) {
-        this.trip = trip;
+    public void setRoute(Route route) {
+        this.route = route;
     }
 
     public List<Reservation> getReservations() {
@@ -112,6 +113,13 @@ public class Seat {
     public void setReservations(List<Reservation> reservations) {
         this.reservations = reservations;
     }
+
+
+    
+
+
+
+
 
     
     

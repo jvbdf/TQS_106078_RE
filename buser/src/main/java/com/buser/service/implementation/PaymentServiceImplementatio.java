@@ -1,4 +1,4 @@
-package com.buser.service;
+package com.buser.service.implementation;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,7 +14,7 @@ import com.buser.repository.PaymentRepository;
 import com.buser.repository.ReservationRepository;
 
 @Service
-public class PaymentService {
+public class PaymentServiceImplementatio {
 
     @Autowired
     private PaymentRepository paymentRepository;

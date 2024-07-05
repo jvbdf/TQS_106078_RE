@@ -1,4 +1,4 @@
-package com.buser.service;
+package com.buser.service.implementation;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import com.buser.model.Trip;
 import com.buser.repository.SeatRepository;
 
 @Service
-public class SeatService {
+public class SeatServiceImplementation {
     @Autowired
     private SeatRepository seatRepository;
 

@@ -1,4 +1,4 @@
-package com.buser.service;
+package com.buser.service.implementation;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,7 +14,7 @@ import com.buser.repository.TripRepository;
 
 
 @Service
-public class TripService {
+public class TripServiceImplementation {
 
     @Autowired
     private TripRepository tripRepository;

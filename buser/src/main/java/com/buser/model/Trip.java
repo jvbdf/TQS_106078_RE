@@ -9,7 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -22,33 +22,48 @@ public class Trip {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private LocalDateTime departureTime;
-    @Column(nullable = false)
-    private LocalDateTime arrivalTime;
-    @Column(nullable = false)
-    private double price;
-    @Column(nullable = false)
-    private String currentLocation;
     @ManyToOne
-    @Column(nullable = false)
+    @JoinColumn(name = "route_id", nullable = false)
     private Route route;
 
-    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL)
     @Column(nullable = false)
+    private LocalDateTime departureTime;
+
+    @Column(nullable = false)
+    private LocalDateTime arrivalTime;
+
+    @Column(nullable = false)
+    private double price;
+
+    @Column(length = 100)
+
+    private String currentLocation;
+
+    @Column(length = 100)
+
+    private String nextLocation;
+    
+
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL)
     private List<Seat> seats;
+
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL)
+    private List<Reservation> reservations;
 
     public Trip() {
     }
-    public Trip(Long id, LocalDateTime departureTime, LocalDateTime arrivalTime, double price,
-            Route route, List<Seat> seats) {
+
+    public Trip(Long id, Route route, LocalDateTime departureTime, LocalDateTime arrivalTime, double price,
+            String currentLocation, String nextLocation, List<Seat> seats, List<Reservation> reservations) {
         this.id = id;
+        this.route = route;
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
         this.price = price;
-        this.currentLocation = route.getOrigin().getName();
-        this.route = route;
+        this.currentLocation = currentLocation;
+        this.nextLocation = nextLocation;
         this.seats = seats;
+        this.reservations = reservations;
     }
 
     public Long getId() {
@@ -57,6 +72,14 @@ public class Trip {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Route getRoute() {
+        return route;
+    }
+
+    public void setRoute(Route route) {
+        this.route = route;
     }
 
     public LocalDateTime getDepartureTime() {
@@ -91,12 +114,12 @@ public class Trip {
         this.currentLocation = currentLocation;
     }
 
-    public Route getRoute() {
-        return route;
+    public String getNextLocation() {
+        return nextLocation;
     }
 
-    public void setRoute(Route route) {
-        this.route = route;
+    public void setNextLocation(String nextLocation) {
+        this.nextLocation = nextLocation;
     }
 
     public List<Seat> getSeats() {
@@ -106,6 +129,16 @@ public class Trip {
     public void setSeats(List<Seat> seats) {
         this.seats = seats;
     }
+
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
+    }
+
+    
     
    
 

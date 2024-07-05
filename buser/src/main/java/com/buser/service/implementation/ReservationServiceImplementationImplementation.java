@@ -1,4 +1,4 @@
-package com.buser.service;
+package com.buser.service.implementation;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,7 +15,7 @@ import com.buser.repository.SeatRepository;
 import com.buser.repository.TripRepository;
 
 @Service
-public class ReservationService {
+public class ReservationServiceImplementationImplementation {
     
     @Autowired
     private ReservationRepository reservationRepository;

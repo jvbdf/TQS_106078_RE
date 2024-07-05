@@ -22,40 +22,22 @@ public class Route {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "origin_id")
+    @JoinColumn(name = "origin_id", nullable = false)
     private City origin;
 
     @ManyToOne
-    @JoinColumn(name = "origin_id", nullable = false)
+    @JoinColumn(name = "destination_id", nullable = false)
     private City destination;
-
-    @Column(nullable = false)
-    private int totalSeats;
-
-    @Column(nullable = false)
-    private int availableSeats;
-
-    @Column(nullable = false)
-    private int normalSeats;
-
-    @Column(nullable = false)
-    private int premiumSeats;
 
     @OneToMany(mappedBy = "route", cascade = CascadeType.ALL)
     private List<Trip> trips;
 
-    public Route() {
-    }
-
-    public Route(City origin, City destination, int totalSeats, int availableSeats, int normalSeats, int premiumSeats) {
+    public Route(Long id, City origin, City destination, List<Trip> trips) {
+        this.id = id;
         this.origin = origin;
         this.destination = destination;
-        this.totalSeats = totalSeats;
-        this.availableSeats = availableSeats;
-        this.normalSeats = normalSeats;
-        this.premiumSeats = premiumSeats;
+        this.trips = trips;
     }
-
 
     public Long getId() {
         return id;
@@ -81,38 +63,6 @@ public class Route {
         this.destination = destination;
     }
 
-    public int getTotalSeats() {
-        return totalSeats;
-    }
-
-    public void setTotalSeats(int totalSeats) {
-        this.totalSeats = totalSeats;
-    }
-
-    public int getAvailableSeats() {
-        return availableSeats;
-    }
-
-    public void setAvailableSeats(int availableSeats) {
-        this.availableSeats = availableSeats;
-    }
-
-    public int getNormalSeats() {
-        return normalSeats;
-    }
-
-    public void setNormalSeats(int normalSeats) {
-        this.normalSeats = normalSeats;
-    }
-
-    public int getPremiumSeats() {
-        return premiumSeats;
-    }
-
-    public void setPremiumSeats(int premiumSeats) {
-        this.premiumSeats = premiumSeats;
-    }
-
     public List<Trip> getTrips() {
         return trips;
     }
@@ -120,6 +70,8 @@ public class Route {
     public void setTrips(List<Trip> trips) {
         this.trips = trips;
     }
+
     
+
 
 }

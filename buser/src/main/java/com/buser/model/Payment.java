@@ -1,6 +1,7 @@
 package com.buser.model;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,6 +13,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name="payment")
@@ -20,10 +23,12 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
-    private String transactionId;
+    
+    @Column(nullable = false, unique = true)
+    private UUID transactionId;
 
     @Column(nullable = false)
+    @Min(0)
     private double amount;
 
     @Column(nullable = false)
@@ -33,19 +38,29 @@ public class Payment {
     @Column(nullable = false)
     private PaymentStatus paymentStatus;
 
-    @OneToOne
-    @JoinColumn(name = "reservation_id")
+    
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    private PaymentType paymentType;
+
+    @Size(min = 1, max = 255)// Payment  informations
+    @Column(nullable = false, length = 255)
+    private String paymentData;
+
+    @OneToOne
+    @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;
 
-    public Payment(){}
-
-    public Payment(String transactionId, double amount, LocalDateTime paymentTime, PaymentStatus paymentStatus,
+    public Payment(Long id, UUID transactionId, @Min(0) double amount, LocalDateTime paymentTime,
+            PaymentStatus paymentStatus, PaymentType paymentType, @Size(min = 1, max = 255) String paymentData,
             Reservation reservation) {
+        this.id = id;
         this.transactionId = transactionId;
         this.amount = amount;
         this.paymentTime = paymentTime;
         this.paymentStatus = paymentStatus;
+        this.paymentType = paymentType;
+        this.paymentData = paymentData;
         this.reservation = reservation;
     }
 
@@ -57,11 +72,11 @@ public class Payment {
         this.id = id;
     }
 
-    public String getTransactionId() {
+    public UUID getTransactionId() {
         return transactionId;
     }
 
-    public void setTransactionId(String transactionId) {
+    public void setTransactionId(UUID transactionId) {
         this.transactionId = transactionId;
     }
 
@@ -89,6 +104,22 @@ public class Payment {
         this.paymentStatus = paymentStatus;
     }
 
+    public PaymentType getPaymentType() {
+        return paymentType;
+    }
+
+    public void setPaymentType(PaymentType paymentType) {
+        this.paymentType = paymentType;
+    }
+
+    public String getPaymentData() {
+        return paymentData;
+    }
+
+    public void setPaymentData(String paymentData) {
+        this.paymentData = paymentData;
+    }
+
     public Reservation getReservation() {
         return reservation;
     }
@@ -96,6 +127,10 @@ public class Payment {
     public void setReservation(Reservation reservation) {
         this.reservation = reservation;
     }
+
+    
+
+    
 
     
 }
