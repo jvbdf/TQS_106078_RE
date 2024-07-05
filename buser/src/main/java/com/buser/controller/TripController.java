@@ -16,7 +16,7 @@ import java.util.List;
 public class TripController {
 
     @Autowired
-    private TripServiceImplementation tripService;
+    private TripServiceImpl tripService;
 
     @GetMapping
     public ResponseEntity<List<Trip>> getAllTrips() {

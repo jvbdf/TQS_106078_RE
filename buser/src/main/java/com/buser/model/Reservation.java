@@ -58,8 +58,8 @@ public class Reservation {
     public Reservation() {
     }
 
-    public Reservation(Long id, String passengerName, String documentNumber, String email, String phone,
-            LocalDateTime reservationTime, UUID token, double totalPrice, List<Seat> seats, Trip trip) {
+    public Reservation(String passengerName, String documentNumber, String email, String phone,
+            LocalDateTime reservationTime, UUID token, List<Seat> seats, Trip trip) {
         this.id = id;
         this.passengerName = passengerName;
         this.documentNumber = documentNumber;

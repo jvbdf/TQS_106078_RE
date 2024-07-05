@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
 
 @Entity
 @Table(name = "trip")
@@ -42,6 +43,21 @@ public class Trip {
     @Column(length = 100)
 
     private String nextLocation;
+
+    @Column(nullable = false)
+    private int totalSeats;
+
+    @Column(nullable = false)
+   
+    private int availableSeats;
+
+    @Column(nullable = false)
+ 
+    private int normalSeats;
+
+    @Column(nullable = false)
+  
+    private int premiumSeats;
     
 
     @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL)
@@ -65,7 +81,21 @@ public class Trip {
         this.seats = seats;
         this.reservations = reservations;
     }
+    public boolean hasAvailableSeats(int seatCount) {
+        return this.availableSeats >= seatCount;
+    }
 
+    public void reserveSeats(int seatCount) {
+        if (hasAvailableSeats(seatCount)) {
+            this.availableSeats -= seatCount;
+        } else {
+            throw new RuntimeException("Not enough available seats");
+        }
+    }
+
+    public void releaseSeats(int seatCount) {
+        this.availableSeats += seatCount;
+    }
     public Long getId() {
         return id;
     }
@@ -138,6 +168,39 @@ public class Trip {
         this.reservations = reservations;
     }
 
+    public int getTotalSeats() {
+        return totalSeats;
+    }
+
+    public void setTotalSeats(int totalSeats) {
+        this.totalSeats = totalSeats;
+    }
+
+    public int getAvailableSeats() {
+        return availableSeats;
+    }
+
+    public void setAvailableSeats(int availableSeats) {
+        this.availableSeats = availableSeats;
+    }
+
+    public int getNormalSeats() {
+        return normalSeats;
+    }
+
+    public void setNormalSeats(int normalSeats) {
+        this.normalSeats = normalSeats;
+    }
+
+    public int getPremiumSeats() {
+        return premiumSeats;
+    }
+
+    public void setPremiumSeats(int premiumSeats) {
+        this.premiumSeats = premiumSeats;
+    }
+
+    
     
     
    
