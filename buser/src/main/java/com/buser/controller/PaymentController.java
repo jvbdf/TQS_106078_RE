@@ -40,14 +40,18 @@ public class PaymentController {
             Payment payment = new Payment();
             payment.setReservation(reservation);
             payment.setAmount(request.getAmount());
-            payment.setPaymentType(PaymentType.valueOf(request.getPaymentType()));  // Converte String para PaymentType
+            try {
+                payment.setPaymentType(PaymentType.valueOf(request.getPaymentType().toUpperCase()));  // Converte String para PaymentType
+            } catch (IllegalArgumentException e) {
+                log.error("Invalid payment type: {}", request.getPaymentType(), e);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid payment type");
+            }
             payment.setPaymentData(request.getPaymentData());
             payment.setTransactionId(UUID.randomUUID());
             Payment createdPayment = paymentService.createPayment(payment);
-            return ResponseEntity.ok(createdPayment);
-        } catch (IllegalArgumentException e) {
-            log.error("Invalid payment type: {}", request.getPaymentType(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid payment type");
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdPayment);
+        } catch (ResponseStatusException e) {
+            throw e; // Re-lança a exceção para preservar o status code
         } catch (RuntimeException e) {
             log.error("Error creating payment", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error creating payment");
@@ -65,6 +69,8 @@ public class PaymentController {
                 log.warn("Payment not found with transaction ID: {}", transactionId);
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment not found");
             }
+        } catch (ResponseStatusException e) {
+            throw e; // Re-lança a exceção para preservar o status code
         } catch (Exception e) {
             log.error("Error occurred while getting payment by transaction ID: {}", transactionId, e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error occurred while getting payment");

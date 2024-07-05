@@ -69,10 +69,10 @@ public class TripController {
     }
 
     @PatchMapping("/{id}/location")
-    public ResponseEntity<Trip> updateCurrentLocation(@PathVariable Long id, @RequestBody String currentLocation) {
-        log.info("Updating current location of trip ID: {} to {}", id, currentLocation);
+    public ResponseEntity<Trip> updateCurrentLocation(@PathVariable Long id, @RequestBody City newLocation) {
+        log.info("Updating current location of trip ID: {} to {}", id, newLocation);
         try {
-            Trip updatedTrip = tripService.updateCurrentLocation(id, currentLocation);
+            Trip updatedTrip = tripService.updateCurrentLocation(id, newLocation);
             return ResponseEntity.ok(updatedTrip);
         } catch (RuntimeException e) {
             log.error("Error updating current location of trip ID: {}", id, e);

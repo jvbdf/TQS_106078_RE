@@ -68,6 +68,7 @@ public class Reservation {
         this.status = ReservationStatus.PENDING;
         this.seats = seats;
         this.trip = trip;
+        this.totalPrice = seats.stream().mapToDouble(Seat::getPrice).sum();
     }
 
     public Reservation(String passengerName2, String documentNumber2, String email2, String phone2, LocalDateTime now,

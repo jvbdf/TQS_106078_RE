@@ -32,11 +32,7 @@ public class PaymentServiceTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-
-        // Criar uma reserva de exemplo
         reservation = new Reservation();
-
-        // Criar um pagamento de exemplo
         payment = new Payment(100.0, PaymentType.CREDIT_CARD, "1234-5678-9876-5432", reservation);
     }
 

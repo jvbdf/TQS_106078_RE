@@ -29,7 +29,7 @@ public class ReservationController {
         try {
             Reservation reservation = reservationService.createReservation(
                 request.getPassengerName(), request.getDocumentNumber(), request.getEmail(), request.getPhone(), request.getTripId(), request.getSeatIds());
-            return ResponseEntity.ok(reservation);
+            return new ResponseEntity<>(reservation, HttpStatus.CREATED);
         } catch (RuntimeException e) {
             log.error("Error creating reservation", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error creating reservation");
