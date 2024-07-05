@@ -41,6 +41,10 @@ public class Seat {
     @JoinColumn(name = "route_id", nullable = false)
     private Route route;
 
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "trip_id")
+    private Trip trip;
+
     @ManyToMany(mappedBy = "seats")
     private List<Reservation> reservations;
 

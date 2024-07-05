@@ -59,7 +59,7 @@ public class Trip {
     private int premiumSeats;
     
 
-    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Seat> seats;
 
     @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL)

@@ -73,7 +73,6 @@ public class Reservation {
 
     public Reservation(String passengerName2, String documentNumber2, String email2, String phone2, LocalDateTime now,
             UUID token2, List<Seat> seats2, Trip trip2) {
-        //TODO Auto-generated constructor stub
     }
 
     public Long getId() {
@@ -154,6 +153,14 @@ public class Reservation {
 
     public void setTrip(Trip trip) {
         this.trip = trip;
+    }
+
+    public ReservationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ReservationStatus status) {
+        this.status = status;
     }
 
 }
