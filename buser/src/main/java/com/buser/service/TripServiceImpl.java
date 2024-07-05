@@ -24,6 +24,7 @@ public class TripServiceImpl implements TripService {
 
     @Autowired
     private  CityRepository cityRepository;
+    
 
     @Override
     public List<Trip> getTripsBetweenCities(String originName, String destinationName) {
